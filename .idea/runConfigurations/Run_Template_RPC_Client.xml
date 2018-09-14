@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Template RPC Client" type="JetRunConfigurationType" factoryName="Kotlin" singleton="true">
+    <module name="cordapp-template-kotlin-release-V3" />
+    <option name="VM_PARAMETERS" value="" />
+    <option name="PROGRAM_PARAMETERS" value="localhost:10006" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+    <option name="PASS_PARENT_ENVS" value="true" />
+    <option name="MAIN_CLASS_NAME" value="com.template.ClientKt" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../../cordapp-template-kotlin-release-V3" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
