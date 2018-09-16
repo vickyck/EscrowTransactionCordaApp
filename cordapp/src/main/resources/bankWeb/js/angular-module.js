@@ -23,6 +23,11 @@ app.controller('InvReportingAppController', function ($http, $location, $uibModa
            .map((key) => response.data[key].state.data)
            .reverse());
 
+    demoApp.getServicings = () => $http.get(apiBaseURL + "servicing-all")
+       .then((response) => demoApp.myServicings = Object.keys(response.data)
+           .map((key) => response.data[key].state.data)
+           .reverse());
+
      demoApp.getBankBalance = () => $http.get(apiBaseURL + "bank-balance")
             .then((result) => {
                 //alert(JSON.stringify(result.data.state.data));
@@ -73,4 +78,40 @@ app.controller('InvReportingAppController', function ($http, $location, $uibModa
 
     };
 
+    demoApp.doServicingTX = function () {
+
+        // TODO: read all this from JSON
+
+            var defaultrecoverableFee = 10;
+            var defaultpreservationFee = 10;
+            var defaultlegalCost = 10;
+            var defaultParcelId = "e0adbf57-eb1e-4455-956e-f30a4f43006c";
+            var invAcNum = "5098674354";
+            var bankParty = "O=BankPartyA,L=London,C=GB";
+            var invParty = "O=InvestorPartyB,L=Bangalore,C=IN";
+
+            var bankTXInputData = new Object();
+            bankTXInputData.emiVal = 300; // TODO: get it from form field
+            bankTXInputData.recoverableFeeValue = defaultrecoverableFee;
+            bankTXInputData.preservationFeeValue = defaultpreservationFee;
+            bankTXInputData.legalCostValue = defaultlegalCost;
+            bankTXInputData.parcelId = defaultParcelId;
+            bankTXInputData.invAccountNum = invAcNum;
+            bankTXInputData.servicingParty = bankParty
+            bankTXInputData.invParty = invParty;
+
+            //alert(JSON.stringify(bankTXInputData));
+            var url = `${apiBaseURL}create-servicing`;
+
+            $http.put(url, JSON.stringify(bankTXInputData)).then(
+                   (result) => {
+                      alert(result.data);
+                       demoApp.getServicings();
+                   },
+                   (result) => {
+                       modalInstance.displayMessage(result.data);
+                   }
+               );
+
+        };
 });

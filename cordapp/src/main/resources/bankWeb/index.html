@@ -28,12 +28,24 @@
 </div>
 <div class="container">
     <form class="form-inline">
-        <div class="form-group">
-            <label for="Amount" class="control-label">Amount (Int):</label>
-            <input type="text" ng-model="amount" class="form-control" id="amount">
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label for="Amount" class="control-label">Amount (Int):</label>
+                    <input type="text" ng-model="amount" class="form-control" id="amount">
+                </div>
+                <button ng-click="demoApp.doEscrowTX()" type="button" class="btn btn-primary navbar-btn">Escrow Transact</button>
+                <button type="button" class="btn btn-success">Available Bank Balance: <span class="badge">$ {{demoApp.balance}}</span></button>
+            </div>
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <label for="Amount" class="control-label">Amount (Int):</label>
+                    <input type="text" ng-model="amount" class="form-control" id="svcamount">
+                </div>
+                <button ng-click="demoApp.doServicingTX()" type="button" class="btn btn-primary navbar-btn">Servicing Transact</button>
+                <button type="button" class="btn btn-success">Available Servicing Balance: <span class="badge">$ {{demoApp.balance}}</span></button>
+            </div>
         </div>
-        <button ng-click="demoApp.doEscrowTX()" type="button" class="btn btn-primary navbar-btn">Transact</button>
-        <button type="button" class="btn btn-success">Available Balance: <span class="badge">$ {{demoApp.balance}}</span></button>
     </form>
     <div class="row">
         <div class="col-xs-12">
