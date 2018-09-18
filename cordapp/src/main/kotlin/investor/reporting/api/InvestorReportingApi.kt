@@ -7,6 +7,7 @@ import investor.reporting.flow.RemittanceServiceFlow.BankEscrowTXFlow
 import investor.reporting.flow.RemittanceServiceFlow.BankServicingTXFlow
 import investor.reporting.state.BankState
 import investor.reporting.state.EscrowState
+import investor.reporting.state.InvestorState
 import investor.reporting.state.ServicingState
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateAndRef
@@ -83,12 +84,20 @@ class InvestorReportingApi(private val rpcOps: CordaRPCOps) {
     fun getAllEscrow() = rpcOps.vaultQueryBy<EscrowState>().states
 
     /**
-     * Displays all Escrow states that exist in the node's vault.
+     * Displays all Servicing states that exist in the node's vault.
      */
     @GET
     @Path("servicing-all")
     @Produces(MediaType.APPLICATION_JSON)
     fun getAllServicing() = rpcOps.vaultQueryBy<ServicingState>().states
+
+    /**
+     * Displays all Investor states that exist in the node's vault.
+     */
+    @GET
+    @Path("investor-all")
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getAllInvestor() = rpcOps.vaultQueryBy<InvestorState>().states
 
     /**
      * Displays all Escrow states that exist in the node's vault.
@@ -97,6 +106,14 @@ class InvestorReportingApi(private val rpcOps: CordaRPCOps) {
     @Path("bank-balance")
     @Produces(MediaType.APPLICATION_JSON)
     fun getBankBalance() = rpcOps.vaultQueryBy<BankState>().states.last().state.data
+
+    /**
+     * Displays all Investor states that exist in the node's vault.
+     */
+    @GET
+    @Path("investor-balance")
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getInvestorBalance() = rpcOps.vaultQueryBy<InvestorState>().states.last().state.data
 
     /**
      * Initiates a flow to create master data for tax, insurance, servicing, investor balance, bank balance

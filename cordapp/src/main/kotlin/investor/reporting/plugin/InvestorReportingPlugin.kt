@@ -17,7 +17,7 @@ class InvestorReportingPlugin : WebServerPluginRegistry {
     override val staticServeDirs = mapOf(
             // This will serve the exampleWeb directory in resources to /web/example
             "bank" to javaClass.classLoader.getResource("bankWeb").toExternalForm(),
-            //"investor" to javaClass.classLoader.getResource("investorWeb").toExternalForm()
+            "investor" to javaClass.classLoader.getResource("investorWeb").toExternalForm(),
             "template" to javaClass.classLoader.getResource("templateWeb").toExternalForm()
     )
 }

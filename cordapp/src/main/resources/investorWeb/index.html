@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trading - CorDapp</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" crossorigin="anonymous">
+    <!--<link rel="stylesheet" href="assets/css/style.css" crossorigin="anonymous">-->
+    <link rel="stylesheet" href="assets/css/bootstrap-theme.min.css" crossorigin="anonymous">
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="assets/js/angular.min.js"></script>
+    <script src="assets/js/ui-bootstrap-tpls.min.js"></script>
+    <script src="assets/js/ng-loading-overlay.min.js"></script>
+    <script src="js/angular-module.js"></script>
+</head>
+
+<body ng-app="invReportingAppModule" ng-controller="InvReportingAppController as demoApp">
+
+<div>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="btn btn-primary btn-lg">A Investor in Bangalore </button><a class="navbar-brand" href="#"> </a>
+                {{demoApp.thisNode}}
+            </div>
+        </div>
+    </nav>
+</div>
+
+<form class="form-inline">
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="form-group">
+                <button type="button" class="btn btn-success">Available Investor Balance: <span class="badge">$ {{demoApp.investorBalance}}</span></button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Investor Transactions</div>
+                <div class="panel-body">
+                    <div class="grid grid-pad">
+                        <table class="table table-condensed table-striped">
+                            <thead>
+                            <tr>
+                                <th>Bank</th>
+                                <th>EMI Amount</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="inv in demoApp.myInvestors">
+                                <td>
+                                    {{inv.bankParty}}
+                                </td>
+                                <td>
+                                    {{inv.investorBalanceValue}}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
