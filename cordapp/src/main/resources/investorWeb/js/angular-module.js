@@ -51,6 +51,7 @@ app.controller('InvReportingAppController', function ($http, $location, $uibModa
                 alert(JSON.stringify(demoApp.trans));
             });
         demoApp.getBankBalance();
+        demoApp.getInvestorBalance();
         demoApp.getEscrows();
         demoApp.getTransactions();
         demoApp.getInvestors();

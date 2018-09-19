@@ -73,7 +73,7 @@ object RemittanceServiceFlow {
                 throw Exception("No base states found for InvestorState")
 
             val baseInvState = invStates.last().state.data;
-            val newInvState = InvestorState(baseInvState.investorBalanceValue + EMI_EscrowDeducted + baseEscrowState.taxValue + baseEscrowState.insuranceValue, ourIdentity,props.invParty)
+            val newInvState = InvestorState(baseInvState.investorBalanceValue + EMI_EscrowDeducted + baseEscrowState.taxValue + baseEscrowState.insuranceValue, props.parcelId, ourIdentity,props.invParty)
 
 
             val builder = TransactionBuilder(notary = notary)
@@ -169,7 +169,7 @@ object RemittanceServiceFlow {
                 throw Exception("No base states found for InvestorState")
 
             val baseInvState = invStates.last().state.data;
-            val newInvState = InvestorState(baseInvState.investorBalanceValue + EMI_ServicingDeducted + baseServicingState.recoverableFeeValue + baseServicingState.preservationFeeValue + baseServicingState.legalCostValue, ourIdentity,props.invParty)
+            val newInvState = InvestorState(baseInvState.investorBalanceValue + EMI_ServicingDeducted + baseServicingState.recoverableFeeValue + baseServicingState.preservationFeeValue + baseServicingState.legalCostValue, props.parcelId, ourIdentity,props.invParty)
 
             val builder = TransactionBuilder(notary = notary)
                     .addOutputState(emiState, CONTRACT_ID)

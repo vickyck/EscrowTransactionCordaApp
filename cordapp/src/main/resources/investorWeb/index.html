@@ -47,11 +47,15 @@
                         <table class="table table-condensed table-striped">
                             <thead>
                             <tr>
+                                <th>Parcel ID</th>
                                 <th>Bank</th>
                                 <th>EMI Amount</th>
                             </thead>
                             <tbody>
                             <tr ng-repeat="inv in demoApp.myInvestors">
+                                <td>
+                                    {{inv.parcelId}}
+                                </td>
                                 <td>
                                     {{inv.bankParty}}
                                 </td>
