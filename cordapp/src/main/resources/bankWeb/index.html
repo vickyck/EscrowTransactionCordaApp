@@ -1,137 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>Trading - CorDapp</title>
+    <title>Login - Investor Reporting CorDapp</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" crossorigin="anonymous">
-    <!--<link rel="stylesheet" href="assets/css/style.css" crossorigin="anonymous">-->
     <link rel="stylesheet" href="assets/css/bootstrap-theme.min.css" crossorigin="anonymous">
+    <link href="assets/css/Site.css" rel="stylesheet" />
     <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/bootstrap.min.js" crossorigin="anonymous"></script>
     <script src="assets/js/angular.min.js"></script>
     <script src="assets/js/ui-bootstrap-tpls.min.js"></script>
     <script src="assets/js/ng-loading-overlay.min.js"></script>
-    <script src="js/angular-module.js"></script>
+    <script src="assets/js/angular-ui-router.js"></script>
+    <script src="js/app.js"></script>
 </head>
-
-<body ng-app="invReportingAppModule" ng-controller="InvReportingAppController as demoApp">
-
-<div>
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="btn btn-primary btn-lg">A Bank in London </button><a class="navbar-brand" href="#"> </a>
-                {{demoApp.thisNode}}
-            </div>
-        </div>
-    </nav>
+<body ng-app="invReportingAppModule">
+<div ng-controller="DefController">
+    <div ui-view></div>
 </div>
-<div class="container">
-    <form class="form-inline">
-        <div class="row">
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label for="Amount" class="control-label">Amount (Int):</label>
-                    <input type="text" ng-model="amount" class="form-control" id="amount">
-                </div>
-                <button ng-click="demoApp.doEscrowTX()" type="button" class="btn btn-primary navbar-btn">Escrow Transact</button>
-                <button type="button" class="btn btn-success">Available Bank Balance: <span class="badge">$ {{demoApp.balance}}</span></button>
-            </div>
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <label for="Amount" class="control-label">Amount (Int):</label>
-                    <input type="text" ng-model="amount" class="form-control" id="svcamount">
-                </div>
-                <button ng-click="demoApp.doServicingTX()" type="button" class="btn btn-primary navbar-btn">Servicing Transact</button>
-                <button type="button" class="btn btn-success">Available Servicing Balance: <span class="badge">$ {{demoApp.balance}}</span></button>
-            </div>
-        </div>
-    </form>
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">Escrow Transactions</div>
-                <div class="panel-body">
-                    <div class="grid grid-pad">
-                        <table class="table table-condensed table-striped">
-                            <thead>
-                            <tr>
-                                <th>Investor</th>
-                                <th>ParcelID</th>
-                                <th>Tax</th>
-                                <th>Insurance</th>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="escr in demoApp.myescrows">
-                                <td>
-                                    {{escr.investorParty}}
-                                </td>
-                                <td>
-                                    {{escr.parcelId}}
-                                </td>
-                                <td>
-                                    {{escr.taxValue}}
-                                </td>
-                                <td>
-                                    {{escr.insuranceValue}}
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">Transactions</div>
-                <div class="panel-body">
-                    <div class="grid grid-pad">
-                        <table class="table table-condensed table-striped">
-                            <thead>
-                            <tr>
-                                <th>Hash</th>
-                                <th>Inputs</th>
-                                <th>Outputs</th>
-                                <th>Signers</th>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="tran in demoApp.trans">
-                                <td>
-                                    {{tran.hash}}
-                                </td>
-                                <td>
-                                    <table>
-                                        <tr ng-repeat="ip in tran.inputs track by $index">
-                                            <td>{{ip}}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td>
-                                    <table>
-                                        <tr ng-repeat="op in tran.outputs track by $index">
-                                            <td>{{op}}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td>
-                                    <table>
-                                        <tr ng-repeat="sig in tran.signers">
-                                            <td>{{sig}}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 </body>
 </html>
