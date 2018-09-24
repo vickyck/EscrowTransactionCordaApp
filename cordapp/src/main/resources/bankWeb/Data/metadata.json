@@ -1,0 +1,42 @@
+﻿{
+  "users": [
+    {
+      "bank": [
+        {
+          "username": "venkat",
+          "password": "1234",
+          "fullname": "Venkata Ranga"
+        }
+      ],
+      "investor": [
+        {
+          "username": "vikas",
+          "password": "1234",
+          "fullname": "Vikas K"
+        }
+      ]
+    }
+  ],
+  "bankdata": [
+    {
+      "escrow": {
+        "defaultTax": 10,
+        "defaultInsurance": 10,
+        "defaultParcelId": "e0adbf57-eb1e-4455-956e-f30a4f43006c",
+        "invAcNum": "5098674354",
+        "bankParty": "O=BankPartyA,L=London,C=GB",
+        "invParty": "O=InvestorPartyB,L=Bangalore,C=IN"
+      },
+      "servicing":
+      {
+        "defaultrecoverableFee": 10,
+        "defaultpreservationFee": 10,
+        "defaultlegalCost": 10,
+        "defaultParcelId": "e0adbf57-eb1e-4455-956e-f30a4f43006c",
+        "invAcNum": "5098674354",
+        "bankParty": "O=BankPartyA,L=London,C=GB",
+        "invParty": "O=InvestorPartyB,L=Bangalore,C=IN"
+      }
+    }
+  ]
+}

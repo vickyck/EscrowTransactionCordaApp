@@ -1,0 +1,109 @@
+﻿<div ng-controller="HomeController as demoApp">
+    <div class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Investor portal</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <!--<ul class="nav navbar-nav">
+                    <li><a href="/Home/Contact">Contact</a></li>
+                </ul>-->
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/Manage" title="Manage"><b>Signed in as: </b><i>{{username}}</i></a>
+                    </li>
+                    <li>
+                        <button type="button" class="btn btn-warning btn-sm" ng-click="demoApp.logout()">
+                            <span class="glyphicon glyphicon-log-out"></span> Log out
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <form class="form-inline">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success">Available Investor Balance: <span class="badge">$ {{demoApp.investorBalance}}</span></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Investor Transactions</div>
+                    <div class="panel-body">
+                        <div class="grid grid-pad">
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Parcel ID</th>
+                                        <th>Bank</th>
+                                        <th>EMI Amount</th>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="inv in demoApp.myInvestors">
+                                        <td>
+                                            {{inv.parcelId}}
+                                        </td>
+                                        <td>
+                                            {{inv.bankParty}}
+                                        </td>
+                                        <td>
+                                            {{inv.investorBalanceValue}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Escrow Transactions</div>
+                    <div class="panel-body">
+                        <div class="grid grid-pad">
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Bank</th>
+                                        <th>ParcelID</th>
+                                        <th>Tax</th>
+                                        <th>Insurance</th>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="escr in demoApp.myescrows">
+                                        <td>
+                                            {{escr.escrowParty}}
+                                        </td>
+                                        <td>
+                                            {{escr.parcelId}}
+                                        </td>
+                                        <td>
+                                            {{escr.taxValue}}
+                                        </td>
+                                        <td>
+                                            {{escr.insuranceValue}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
