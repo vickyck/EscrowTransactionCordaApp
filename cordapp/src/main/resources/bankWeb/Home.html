@@ -87,6 +87,46 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="panel panel-primary">
+                    <div class="panel-heading">Servicing Transactions</div>
+                    <div class="panel-body">
+                        <div class="grid grid-pad">
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Investor</th>
+                                    <th>ParcelID</th>
+                                    <th>Legal Costs</th>
+                                    <th>Preservation Fees</th>
+                                    <th>Recoverable Fees</th>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="svc in demoApp.myServicings">
+                                    <td>
+                                        {{svc.invParty}}
+                                    </td>
+                                    <td>
+                                        {{svc.parcelId}}
+                                    </td>
+                                    <td>
+                                        {{svc.legalCostValue}}
+                                    </td>
+                                    <td>
+                                        {{svc.preservationFeeValue}}
+                                    </td>
+                                    <td>
+                                        {{svc.recoverableFeeValue}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel panel-primary">
                     <div class="panel-heading">Transactions</div>
                     <div class="panel-body">
                         <div class="grid grid-pad">

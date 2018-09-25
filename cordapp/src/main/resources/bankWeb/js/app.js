@@ -90,6 +90,7 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
         });
     demoApp.getBankBalance();
     demoApp.getEscrows();
+    demoApp.getServicings();
     demoApp.getTransactions();
 
     demoApp.doEscrowTX = function () {
@@ -121,7 +122,7 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
                        $scope.amount ='';
                    },
                    (result) => {
-                       modalInstance.displayMessage(result.data);
+                       alert("error");
                    }
                );
         });
@@ -161,11 +162,16 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
 
             $http.put(url, JSON.stringify(bankTXInputData)).then(
                    (result) => {
-                       alert(result.data);
-                       demoApp.getServicings();
+                        setAlertTimeout();
+                        regcloseAlert();
+                        $("#result").html('<div class="alert alert-success"><button type="button" class="close">×</button>' + result.data + '</div>');
+                        demoApp.getServicings();
+                        demoApp.getTransactions();
+                        demoApp.getBankBalance();
+                        $scope.svcamount ='';
                    },
                    (result) => {
-                       modalInstance.displayMessage(result.data);
+                       alert("error");
                    }
                );
         });
