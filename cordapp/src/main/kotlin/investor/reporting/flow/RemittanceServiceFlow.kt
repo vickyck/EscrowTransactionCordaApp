@@ -135,33 +135,43 @@ object RemittanceServiceFlow {
             if (baseBankState.bankBalanceValue <= 0)
                 throw Exception("Bank balance is < 0")
 
+
+
             //get the default recoverableFeeValue, preservationFeeValue & legalCostValue values from vault
             val baseServicingStates = serviceHub.vaultService.queryBy<ServicingState>().states
-            if (baseServicingStates.isEmpty())
-                throw Exception("No base states found for ServicingState")
-            val baseServicingState = baseServicingStates.last().state.data;
+            //if (baseServicingStates.isEmpty())
+           //     throw Exception("No base states found for ServicingState")
+           // val baseServicingState = baseServicingStates.last().state.data;
 
             //prepare emi state
-            val EMI_ServicingDeducted = props.emiVal - (props.recoverableFeeValue + props.preservationFeeValue + baseServicingState.legalCostValue)
+            val EMI_ServicingDeducted = props.emiVal - (props.recoverableFeeValue + props.preservationFeeValue + props.legalCostValue)
 
             //validate the emi to see if it can be serviceable
             if (EMI_ServicingDeducted <= 0)
                 throw Exception("Escrow can not be serviced as Emi -(recoverableFeeValue + preservationFeeValue + legalCostValue) is <= 0")
 
-            if (baseBankState.bankBalanceValue < (EMI_ServicingDeducted + props.recoverableFeeValue + props.preservationFeeValue + baseServicingState.legalCostValue))
+            if (baseBankState.bankBalanceValue < EMI_ServicingDeducted)
                 throw Exception("Not enough balance to serve Servicing TX to Investor")
 
             val emiState = EMIState(EMI_ServicingDeducted, props.parcelId, props.invAccountNum, ourIdentity, props.invParty)
 
-            //prepare the new servicing state
-            val servicingState = ServicingState(baseServicingState.recoverableFeeValue + props.recoverableFeeValue,
-                    baseServicingState.preservationFeeValue + props.preservationFeeValue,
-                    baseServicingState.legalCostValue + props.legalCostValue,
-                    props.parcelId,props.invAccountNum,props.servicingParty,props.invParty)
+            val servicingState : ServicingState
+            if (baseServicingStates.isEmpty())
+            {
+                servicingState = ServicingState(props.recoverableFeeValue, props.preservationFeeValue, props.legalCostValue, props.parcelId,props.invAccountNum,ourIdentity, props.invParty)
+            }else
+            {
+                val baseServicingState = baseServicingStates.last().state.data;
+                //prepare the new servicing state
+                servicingState = ServicingState(baseServicingState.recoverableFeeValue + props.recoverableFeeValue,
+                        baseServicingState.preservationFeeValue + props.preservationFeeValue,
+                        baseServicingState.legalCostValue + props.legalCostValue,
+                        props.parcelId,props.invAccountNum,props.servicingParty,props.invParty)
+            }
 
             //prepare the bank state with new available balance
 
-            val newBankState = BankState(baseBankState.bankBalanceValue - (EMI_ServicingDeducted + props.recoverableFeeValue + props.preservationFeeValue + props.legalCostValue), ourIdentity)
+            val newBankState = BankState((baseBankState.bankBalanceValue - EMI_ServicingDeducted), ourIdentity)
 
             //update the investor balance
             val invStates = serviceHub.vaultService.queryBy<InvestorState>().states
@@ -169,7 +179,7 @@ object RemittanceServiceFlow {
                 throw Exception("No base states found for InvestorState")
 
             val baseInvState = invStates.last().state.data;
-            val newInvState = InvestorState(baseInvState.investorBalanceValue + EMI_ServicingDeducted + props.recoverableFeeValue + props.preservationFeeValue + props.legalCostValue, props.parcelId, ourIdentity,props.invParty)
+            val newInvState = InvestorState(baseInvState.investorBalanceValue + EMI_ServicingDeducted , props.parcelId, ourIdentity,props.invParty)
 
             val builder = TransactionBuilder(notary = notary)
                     .addOutputState(emiState, CONTRACT_ID)
