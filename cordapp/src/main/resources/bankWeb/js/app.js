@@ -93,6 +93,28 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
     demoApp.getServicings();
     demoApp.getTransactions();
 
+    demoApp.createDefaultData = function () {
+        var url = `${apiBaseURL}create-default-data`;
+
+        $http.put(url).then(
+               (result) => {
+                    setAlertTimeout();
+                    regcloseAlert();
+                    $("#result").html('<div class="alert alert-success"><button type="button" class="close">×</button>' + result.data + '</div>');
+                    demoApp.getEscrows();
+                    demoApp.getTransactions();
+                    demoApp.getBankBalance();
+                    $scope.amount ='';
+               },
+               (result) => {
+                   modalInstance.displayMessage(result.data);
+               }
+           ).catch(function (err) {
+               console.log(err);
+               throw err;
+        });
+    };
+
     demoApp.doEscrowTX = function () {
         JSONDataService.getData().then(function (response) {
             //alert(JSON.stringify(response));
@@ -120,6 +142,7 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
                        demoApp.getTransactions();
                        demoApp.getBankBalance();
                        $scope.amount ='';
+                       $scope.svcamount ='';
                    },
                    (result) => {
                        alert("error");

@@ -30,7 +30,7 @@
     <div class="container">
         <form class="form-inline">
             <div class="row">
-                <div class="col-xs-6">
+                <div class="col-xs-5">
                     <div class="form-group">
                         <label for="Amount" class="control-label">Amount (Int):</label>
                         <input type="text" ng-model="amount" class="form-control" id="amount">
@@ -38,7 +38,15 @@
                     <button ng-click="demoApp.doEscrowTX()" type="button" class="btn btn-primary navbar-btn">Escrow Transact</button>
                     <button type="button" class="btn btn-success">Available Bank Balance: <span class="badge">$ {{demoApp.balance}}</span></button>
                 </div>
-                <div class="col-xs-6">
+
+                <div class="col-xs-2">
+                    <div class="form-group">
+                        <label class="control-label">Create Default Data:</label>
+                    </div>
+                    <button ng-click="demoApp.createDefaultData()" type="button" class="btn btn-primary navbar-btn">Create</button>
+                </div>
+
+                <div class="col-xs-5">
                     <div class="form-group">
                         <label for="Amount" class="control-label">Amount (Int):</label>
                         <input type="text" ng-model="svcamount" class="form-control" id="svcamount">
@@ -77,46 +85,6 @@
                                             {{escr.insuranceValue}}
                                         </td>
                                     </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">Servicing Transactions</div>
-                    <div class="panel-body">
-                        <div class="grid grid-pad">
-                            <table class="table table-condensed table-striped">
-                                <thead>
-                                <tr>
-                                    <th>Investor</th>
-                                    <th>ParcelID</th>
-                                    <th>Legal Costs</th>
-                                    <th>Preservation Fees</th>
-                                    <th>Recoverable Fees</th>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="svc in demoApp.myServicings">
-                                    <td>
-                                        {{svc.invParty}}
-                                    </td>
-                                    <td>
-                                        {{svc.parcelId}}
-                                    </td>
-                                    <td>
-                                        {{svc.legalCostValue}}
-                                    </td>
-                                    <td>
-                                        {{svc.preservationFeeValue}}
-                                    </td>
-                                    <td>
-                                        {{svc.recoverableFeeValue}}
-                                    </td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div>

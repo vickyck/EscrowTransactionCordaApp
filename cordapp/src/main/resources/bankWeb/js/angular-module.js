@@ -21,27 +21,61 @@ app.controller('InvReportingAppController', function ($http, $location, $uibModa
     demoApp.getEscrows = () => $http.get(apiBaseURL + "escrow-all")
        .then((response) => demoApp.myescrows = Object.keys(response.data)
            .map((key) => response.data[key].state.data)
-           .reverse());
+           .reverse()).catch(function (err) {
+             console.log(err);
+             throw err;
+      });;
 
     demoApp.getServicings = () => $http.get(apiBaseURL + "servicing-all")
        .then((response) => demoApp.myServicings = Object.keys(response.data)
            .map((key) => response.data[key].state.data)
-           .reverse());
+           .reverse()).catch(function (err) {
+             console.log(err);
+             throw err;
+      });;
 
      demoApp.getBankBalance = () => $http.get(apiBaseURL + "bank-balance")
             .then((result) => {
                 //alert(JSON.stringify(result.data.state.data));
                 demoApp.balance = result.data.bankBalanceValue;
+            }).catch(function (err) {
+                   console.log(err);
+                   throw err;
             });
 
         demoApp.getTransactions = () => $http.get(apiBaseURL + "transactions")
             .then((result) => {
                 demoApp.trans = result.data;
                 alert(JSON.stringify(demoApp.trans));
-            });
+            }).catch(function (err) {
+                 console.log(err);
+                 throw err;
+          });
         demoApp.getBankBalance();
         demoApp.getEscrows();
         demoApp.getTransactions();
+
+    demoApp.createDefaultData = function () {
+            var url = `${apiBaseURL}create-default-data`;
+
+            $http.put(url).then(
+                   (result) => {
+                        setAlertTimeout();
+                        regcloseAlert();
+                        $("#result").html('<div class="alert alert-success"><button type="button" class="close">×</button>' + result.data + '</div>');
+                        demoApp.getEscrows();
+                        demoApp.getTransactions();
+                        demoApp.getBankBalance();
+                        $scope.amount ='';
+                   },
+                   (result) => {
+                       modalInstance.displayMessage(result.data);
+                   }
+               ).catch(function (err) {
+                   console.log(err);
+                   throw err;
+            });
+    };
 
     demoApp.doEscrowTX = function () {
 
@@ -74,7 +108,10 @@ app.controller('InvReportingAppController', function ($http, $location, $uibModa
                (result) => {
                    modalInstance.displayMessage(result.data);
                }
-           );
+           ).catch(function (err) {
+               console.log(err);
+               throw err;
+        });
 
     };
 
@@ -111,7 +148,9 @@ app.controller('InvReportingAppController', function ($http, $location, $uibModa
                    (result) => {
                        modalInstance.displayMessage(result.data);
                    }
-               );
-
+               ).catch(function (err) {
+                   console.log(err);
+                   throw err;
+            });
         };
 });
