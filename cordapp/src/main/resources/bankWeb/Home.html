@@ -29,62 +29,129 @@
     <div id="result"></div>
     <div class="container">
         <form class="form-inline">
+            <br />
+            <div style="float:right;"><button type="button" class="btn btn-success">Available Bank Balance: <span class="badge">$ {{demoApp.balance}}</span></button></div>
+            <br />
             <div class="row">
-                <div class="col-xs-5">
-                    <div class="form-group">
-                        <label for="Amount" class="control-label">Amount (Int):</label>
-                        <input type="text" ng-model="amount" class="form-control" id="amount">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <span id="spnToggle"><a runat="server" href="#" title="expandcollpse" id="lnkToggle">Expand/Collapse</a></span>
                     </div>
-                    <button ng-click="demoApp.doEscrowTX()" type="button" class="btn btn-primary navbar-btn">Escrow Transact</button>
-                    <button type="button" class="btn btn-success">Available Bank Balance: <span class="badge">$ {{demoApp.balance}}</span></button>
                 </div>
-
-                <div class="col-xs-2">
-                    <div class="form-group">
-                        <label class="control-label">Create Default Data:</label>
+                <div class="col-md-12">
+                    <div class="col-md-4">
+                        <div class="panel panel-primary panel-heading-sm">
+                            <div class="panel-heading">Receive Payment</div>
+                            <div id="dvReceivePayment" class="panel-collapse in">
+                                <div class="panel-body" style="min-height: 250px;">
+                                    <div class="form-group">
+                                        <label for="Amount" class="control-label">Amount:</label>
+                                        <input type="text" ng-model="amount" class="form-control" id="amount">
+                                    </div>
+                                    <button ng-click="demoApp.receivePayment()" type="button" class="btn btn-primary navbar-btn">Submit</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <button ng-click="demoApp.createDefaultData()" type="button" class="btn btn-primary navbar-btn">Create</button>
-                </div>
-
-                <div class="col-xs-5">
-                    <div class="form-group">
-                        <label for="Amount" class="control-label">Amount (Int):</label>
-                        <input type="text" ng-model="svcamount" class="form-control" id="svcamount">
+                    <div class="col-md-4">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">Send Payment</div>
+                            <div id="dvInvPayment" class="panel-collapse in">
+                                <div class="panel-body" style="min-height: 250px;">
+                                    <div class="form-group">
+                                        <table>
+                                            <tr>
+                                                <td><label for="invamount" class="control-label">Amount:</label></td>
+                                                <td><input type="text" ng-model="invamount" class="form-control" id="invamount"></td>
+                                            </tr>
+                                            <tr></tr>
+                                            <tr>
+                                                <td><h6><i>Principal+Interest:</i></h6></td>
+                                                <td align="center"><label for="Pricipal" id="pricipal" class="control-label text-right" ng-model="pricipal">{{(invamount - (demoApp.tax + demoApp.insurance)) < 0 ? 0 : (invamount - (demoApp.tax + demoApp.insurance))}}</label></td>
+                                            </tr>
+                                            <tr>
+                                                <td><h6><i>Tax:</i></h6></td>
+                                                <td align="center"><label for="tax" id="tax" class="control-label text-right" ng-model="tax"></label>{{demoApp.tax}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><h6><i>Insurance:</i></h6></td>
+                                                <td align="center"><label for="insurance" id="insurance" class="control-label text-right" ng-model="insurance">{{demoApp.insurance}}</label></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <button ng-click="demoApp.doEscrowTX()" type="button" class="btn btn-primary navbar-btn">Submit</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <button ng-click="demoApp.doServicingTX()" type="button" class="btn btn-primary navbar-btn">Servicing Transact</button>
-                    <button type="button" class="btn btn-success">Available Servicing Balance: <span class="badge">$ {{demoApp.balance}}</span></button>
+                    <div class="col-md-4">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">Pre Closure/Closure - Payment</div>
+                            <div id="dvPreclosure" class="panel-collapse in">
+                                <div class="panel-body" style="min-height: 250px;">
+                                    <div class="form-group">
+                                        <table>
+                                            <tr>
+                                                <td><label for="svcamount" class="control-label">Amount:</label></td>
+                                                <td><input type="text" ng-model="svcamount" class="form-control" id="svcamount"></td>
+                                            </tr>
+                                            <tr></tr>
+                                            <tr>
+                                                <td><h6><i>Principal+Interest:</i></h6></td>
+                                                <td align="center"><label for="Pricipal1" id="pricipal1" class="control-label text-right" ng-model="pricipal1">{{(svcamount - (demoApp.RecoverableFee + demoApp.PreservationFee+demoApp.LegalCost)) < 0 ? 0 : (svcamount - (demoApp.RecoverableFee + demoApp.PreservationFee+demoApp.LegalCost))}}</label></td>
+                                            </tr>
+                                            <tr>
+                                                <td><h6><i>Recoverable Fee:</i></h6></td>
+                                                <td align="center"><label for="tax" id="RecoverableFee" class="control-label text-right" ng-model="RecoverableFee"></label>{{demoApp.RecoverableFee}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><h6><i>Preservation Fee:</i></h6></td>
+                                                <td align="center"><label for="insurance" id="PreservationFee" class="control-label text-right" ng-model="PreservationFee">{{demoApp.PreservationFee}}</label></td>
+                                            </tr>
+                                            <tr>
+                                                <td><h6><i>Legal Cost:</i></h6></td>
+                                                <td align="center"><label for="insurance" id="LegalCost" class="control-label text-right" ng-model="LegalCost">{{demoApp.LegalCost}}</label></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <button ng-click="demoApp.doServicingTX()" type="button" class="btn btn-primary navbar-btn">Submit</button>
+                                    <!--<button type="button" class="btn btn-success">Available Servicing Balance: <span class="badge">$ {{demoApp.balance}}</span></button>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-md-12">
                 <div class="panel panel-primary">
                     <div class="panel-heading">Escrow Transactions</div>
                     <div class="panel-body">
                         <div class="grid grid-pad">
                             <table class="table table-condensed table-striped">
                                 <thead>
-                                    <tr>
-                                        <th>Investor</th>
-                                        <th>ParcelID</th>
-                                        <th>Tax</th>
-                                        <th>Insurance</th>
+                                <tr>
+                                    <th>Investor</th>
+                                    <th>ParcelID</th>
+                                    <th>Tax</th>
+                                    <th>Insurance</th>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="escr in demoApp.myescrows">
-                                        <td>
-                                            {{escr.investorParty}}
-                                        </td>
-                                        <td>
-                                            {{escr.parcelId}}
-                                        </td>
-                                        <td>
-                                            {{escr.taxValue}}
-                                        </td>
-                                        <td>
-                                            {{escr.insuranceValue}}
-                                        </td>
-                                    </tr>
+                                <tr ng-repeat="escr in demoApp.myescrows">
+                                    <td>
+                                        {{escr.investorParty}}
+                                    </td>
+                                    <td>
+                                        {{escr.parcelId}}
+                                    </td>
+                                    <td>
+                                        {{escr.taxValue}}
+                                    </td>
+                                    <td>
+                                        {{escr.insuranceValue}}
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -95,44 +162,84 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="panel panel-primary">
+                    <div class="panel-heading">Servicing Transactions</div>
+                    <div class="panel-body">
+                        <div class="grid grid-pad">
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Investor</th>
+                                    <th>ParcelID</th>
+                                    <th>Legal Costs</th>
+                                    <th>Preservation Fees</th>
+                                    <th>Recoverable Fees</th>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="svc in demoApp.myServicings">
+                                    <td>
+                                        {{svc.invParty}}
+                                    </td>
+                                    <td>
+                                        {{svc.parcelId}}
+                                    </td>
+                                    <td>
+                                        {{svc.legalCostValue}}
+                                    </td>
+                                    <td>
+                                        {{svc.preservationFeeValue}}
+                                    </td>
+                                    <td>
+                                        {{svc.recoverableFeeValue}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-primary">
                     <div class="panel-heading">Transactions</div>
                     <div class="panel-body">
                         <div class="grid grid-pad">
                             <table class="table table-condensed table-striped">
                                 <thead>
-                                    <tr>
-                                        <th>Hash</th>
-                                        <th>Inputs</th>
-                                        <th>Outputs</th>
-                                        <th>Signers</th>
+                                <tr>
+                                    <th>Hash</th>
+                                    <th>Inputs</th>
+                                    <th>Outputs</th>
+                                    <th>Signers</th>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="tran in demoApp.trans">
-                                        <td>
-                                            {{tran.hash}}
-                                        </td>
-                                        <td>
-                                            <table>
-                                                <tr ng-repeat="ip in tran.inputs track by $index">
-                                                    <td>{{ip}}</td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table>
-                                                <tr ng-repeat="op in tran.outputs track by $index">
-                                                    <td>{{op}}</td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table>
-                                                <tr ng-repeat="sig in tran.signers">
-                                                    <td>{{sig}}</td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
+                                <tr ng-repeat="tran in demoApp.trans">
+                                    <td>
+                                        {{tran.hash}}
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tr ng-repeat="ip in tran.inputs track by $index">
+                                                <td>{{ip}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tr ng-repeat="op in tran.outputs track by $index">
+                                                <td>{{op}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tr ng-repeat="sig in tran.signers">
+                                                <td>{{sig}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>

@@ -50,6 +50,11 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
     // We identify the node.
     const apiBaseURL = "http://localhost:10010/api/invreporting/"; // TODO remove harcoded urls
     let peers = [];
+    $('#spnRefresh').on('click', function () {
+        demoApp.getInvestorBalance();
+        demoApp.getEscrows();
+        demoApp.getInvestorPayments();
+    });
 
     $http.get(apiBaseURL + "me").then((response) => demoApp.thisNode = response.data.me);
 
@@ -70,6 +75,11 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
                .map((key) => response.data[key].state.data)
                .reverse());
 
+    demoApp.getInvestorPayments = () => $http.get(apiBaseURL + "investor-payments")
+           .then((response) => demoApp.myInvestorPayments = Object.keys(response.data)
+               .map((key) => response.data[key].state.data)
+               .reverse());
+
     demoApp.getBankBalance = () => $http.get(apiBaseURL + "bank-balance")
            .then((result) => {
                //alert(JSON.stringify(result.data.state.data));
@@ -87,11 +97,12 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
             demoApp.trans = result.data;
             //alert(JSON.stringify(demoApp.trans));
         });
-    demoApp.getBankBalance();
+    //demoApp.getBankBalance();
     demoApp.getInvestorBalance();
     demoApp.getEscrows();
-    demoApp.getTransactions();
-    demoApp.getInvestors();
+    //demoApp.getTransactions();
+    //demoApp.getInvestors();
+    demoApp.getInvestorPayments();
 
 
     demoApp.logout = function () {

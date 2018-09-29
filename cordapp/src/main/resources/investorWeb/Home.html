@@ -32,6 +32,7 @@
                 <div class="col-xs-6">
                     <div class="form-group">
                         <button type="button" class="btn btn-success">Available Investor Balance: <span class="badge">$ {{demoApp.investorBalance}}</span></button>
+                        <span id="spnRefresh"><a runat="server" href="#" title="refresh" id="lnkRefresh">Refresh</a></span>
                     </div>
                 </div>
             </div>
@@ -44,23 +45,27 @@
                         <div class="grid grid-pad">
                             <table class="table table-condensed table-striped">
                                 <thead>
-                                    <tr>
-                                        <th>Parcel ID</th>
-                                        <th>Bank</th>
-                                        <th>EMI Amount</th>
+                                <tr>
+                                    <th>Bank</th>
+                                    <th>Parcel ID</th>
+                                    <th>Amount Received</th>
+                                    <th>Total Amount Received</th>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="inv in demoApp.myInvestors">
-                                        <td>
-                                            {{inv.parcelId}}
-                                        </td>
-                                        <td>
-                                            {{inv.bankParty}}
-                                        </td>
-                                        <td>
-                                            {{inv.investorBalanceValue}}
-                                        </td>
-                                    </tr>
+                                <tr ng-repeat="inv in demoApp.myInvestorPayments">
+                                    <td>
+                                        {{inv.bank}}
+                                    </td>
+                                    <td>
+                                        {{inv.parcelId}}
+                                    </td>
+                                    <td>
+                                        {{inv.receivedAmount}}
+                                    </td>
+                                    <td>
+                                        {{inv.value}}
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -76,27 +81,35 @@
                         <div class="grid grid-pad">
                             <table class="table table-condensed table-striped">
                                 <thead>
-                                    <tr>
-                                        <th>Bank</th>
-                                        <th>ParcelID</th>
-                                        <th>Tax</th>
-                                        <th>Insurance</th>
+                                <tr>
+                                    <th>Bank</th>
+                                    <th>ParcelID</th>
+                                    <th>Tax Received</th>
+                                    <th>Insurance Received</th>
+                                    <th>Cumulative Tax</th>
+                                    <th>Cumulative Insurance</th>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="escr in demoApp.myescrows">
-                                        <td>
-                                            {{escr.escrowParty}}
-                                        </td>
-                                        <td>
-                                            {{escr.parcelId}}
-                                        </td>
-                                        <td>
-                                            {{escr.taxValue}}
-                                        </td>
-                                        <td>
-                                            {{escr.insuranceValue}}
-                                        </td>
-                                    </tr>
+                                <tr ng-repeat="escr in demoApp.myescrows">
+                                    <td>
+                                        {{escr.escrowParty}}
+                                    </td>
+                                    <td>
+                                        {{escr.parcelId}}
+                                    </td>
+                                    <td>
+                                        {{escr.taxReceived}}
+                                    </td>
+                                    <td>
+                                        {{escr.insuranceReceived}}
+                                    </td>
+                                    <td>
+                                        {{escr.taxValue}}
+                                    </td>
+                                    <td>
+                                        {{escr.insuranceValue}}
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>

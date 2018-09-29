@@ -62,7 +62,9 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
     // We identify the node.
     const apiBaseURL = "http://localhost:10007/api/invreporting/"; // TODO remove harcoded urls
     let peers = [];
-
+    $('#spnToggle').on('click', function () {
+        $('.panel-collapse').collapse('toggle');
+    });
     $http.get(apiBaseURL + "me").then((response) => demoApp.thisNode = response.data.me);
 
     $http.get(apiBaseURL + "peers").then((response) => peers = response.data.peers);
@@ -88,32 +90,55 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
             demoApp.trans = result.data;
             //alert(JSON.stringify(demoApp.trans));
         });
-    demoApp.getBankBalance();
-    demoApp.getEscrows();
-    demoApp.getServicings();
-    demoApp.getTransactions();
-
-    demoApp.createDefaultData = function () {
-        var url = `${apiBaseURL}create-default-data`;
-
+    demoApp.receivePayment = function () {
+        var url = `${apiBaseURL}receive-payment-post?amount=${$scope.amount}`;
         $http.put(url).then(
                (result) => {
-                    setAlertTimeout();
-                    regcloseAlert();
-                    $("#result").html('<div class="alert alert-success"><button type="button" class="close">×</button>' + result.data + '</div>');
-                    demoApp.getEscrows();
-                    demoApp.getTransactions();
-                    demoApp.getBankBalance();
-                    $scope.amount ='';
+                   setAlertTimeout();
+                   regcloseAlert();
+                   //alert(result.data);
+                   $("#result").html('<div class="alert alert-success"><button type="button" class="close">×</button>' + result.data + '</div>');
+                   demoApp.getEscrows();
+                   demoApp.getTransactions();
+                   demoApp.getBankBalance();
+                   $scope.amount = '';
                },
                (result) => {
-                   modalInstance.displayMessage(result.data);
+                   setAlertTimeout();
+                   regcloseAlert();
+                   $("#result").html('<div class="alert alert-danger"><button type="button" class="close">×</button>' + result.data + '</div>');
+                   $scope.amount = '';
                }
-           ).catch(function (err) {
-               console.log(err);
-               throw err;
+           );
+    };
+    demoApp.setDefaultEscrowScope = function () {
+        JSONDataService.getData().then(function (response) {
+            //alert(JSON.stringify(response));
+            var escrow = response.data.bankdata[0].escrow;
+            demoApp.tax = escrow.defaultTax;
+            demoApp.insurance = escrow.defaultInsurance;
+            $scope.principal = 0;
+            //alert(JSON.stringify(escrow));
         });
     };
+    demoApp.setDefaultServicingScope = function () {
+        JSONDataService.getData().then(function (response) {
+            //alert(JSON.stringify(response));
+            var servicing = response.data.bankdata[0].servicing;
+            demoApp.RecoverableFee = servicing.defaultrecoverableFee;
+            demoApp.PreservationFee = servicing.defaultpreservationFee;
+            demoApp.LegalCost = servicing.defaultlegalCost;
+            $scope.principal1 = 0;
+            //alert(JSON.stringify(escrow));
+        });
+    };
+    demoApp.setDefaultEscrowScope();
+    demoApp.setDefaultServicingScope();
+    demoApp.getBankBalance();
+    demoApp.getEscrows();
+    demoApp.getTransactions();
+    demoApp.getServicings();
+
 
     demoApp.doEscrowTX = function () {
         JSONDataService.getData().then(function (response) {
@@ -121,7 +146,7 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
             var escrow = response.data.bankdata[0].escrow;
             //alert(JSON.stringify(escrow));
             var bankTXInputData = new Object();
-            bankTXInputData.emiVal = parseInt($scope.amount);
+            bankTXInputData.emiVal = parseInt($scope.invamount);
             bankTXInputData.taxVal = escrow.defaultTax;
             bankTXInputData.insuranceVal = escrow.defaultInsurance;
             bankTXInputData.parcelId = escrow.defaultParcelId;
@@ -141,13 +166,14 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
                        demoApp.getEscrows();
                        demoApp.getTransactions();
                        demoApp.getBankBalance();
-                       $scope.amount ='';
-                       $scope.svcamount ='';
                    },
                    (result) => {
-                       alert("error");
+                       setAlertTimeout();
+                       regcloseAlert();
+                       $("#result").html('<div class="alert alert-danger"><button type="button" class="close">×</button>' + result.data + '</div>');
                    }
                );
+            $scope.invamount = '';
         });
 
     };
@@ -169,7 +195,7 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
 
     demoApp.doServicingTX = function () {
         JSONDataService.getData().then(function (response) {
-            //alert(JSON.stringify(response));
+            //alert($scope.svcamount);
             var servicing = response.data.bankdata[0].servicing;
             var bankTXInputData = new Object();
             bankTXInputData.emiVal = parseInt($scope.svcamount);
@@ -180,29 +206,29 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
             bankTXInputData.invAccountNum = servicing.invAcNum;
             bankTXInputData.servicingParty = servicing.bankParty
             bankTXInputData.invParty = servicing.invParty;
+            console.log(JSON.stringify(bankTXInputData));
 
             var url = `${apiBaseURL}create-servicing`;
 
             $http.put(url, JSON.stringify(bankTXInputData)).then(
                    (result) => {
-                        setAlertTimeout();
-                        regcloseAlert();
-                        $("#result").html('<div class="alert alert-success"><button type="button" class="close">×</button>' + result.data + '</div>');
-                        demoApp.getServicings();
-                        demoApp.getTransactions();
-                        demoApp.getBankBalance();
-                        $scope.svcamount ='';
+                       setAlertTimeout();
+                       regcloseAlert();
+                       //alert(result.data);
+                       $("#result").html('<div class="alert alert-success"><button type="button" class="close">×</button>' + result.data + '</div>');
+                       demoApp.getServicings();
                    },
                    (result) => {
-                       alert("error");
+                       setAlertTimeout();
+                       regcloseAlert();
+                       $("#result").html('<div class="alert alert-danger"><button type="button" class="close">×</button>' + result.data + '</div>');
                    }
                );
+            $scope.svcamount = '';
         });
-
-
     };
     demoApp.logout = function () {
-       $location.path('/signin');
+        $location.path('/signin');
     };
 
 });
