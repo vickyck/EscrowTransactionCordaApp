@@ -3,12 +3,10 @@ package investor.reporting.api
 import investor.reporting.IRDataStructures
 import investor.reporting.flow.GetTransactionsFlow
 import investor.reporting.flow.PreLoad.PreRequisiteDataLoadFlow
+import investor.reporting.flow.ReceivePaymentFlow
 import investor.reporting.flow.RemittanceServiceFlow.BankEscrowTXFlow
 import investor.reporting.flow.RemittanceServiceFlow.BankServicingTXFlow
-import investor.reporting.state.BankState
-import investor.reporting.state.EscrowState
-import investor.reporting.state.InvestorState
-import investor.reporting.state.ServicingState
+import investor.reporting.state.*
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.crypto.SecureHash
@@ -100,6 +98,14 @@ class InvestorReportingApi(private val rpcOps: CordaRPCOps) {
     fun getAllInvestor() = rpcOps.vaultQueryBy<InvestorState>().states
 
     /**
+     * Displays all EMI states that exist in the node's vault.
+     */
+    @GET
+    @Path("investor-payments")
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getAllInvestorReceivedPayments() = rpcOps.vaultQueryBy<EMIState>().states
+
+    /**
      * Displays all Escrow states that exist in the node's vault.
      */
     @GET
@@ -128,6 +134,25 @@ class InvestorReportingApi(private val rpcOps: CordaRPCOps) {
         return try {
             val signedTx = rpcOps.startTrackedFlow(::PreRequisiteDataLoadFlow).returnValue.getOrThrow()
             Response.status(CREATED).entity("Transaction id committed to ledger.\n").build()
+
+        } catch (ex: Throwable) {
+            logger.error(ex.message, ex)
+            Response.status(BAD_REQUEST).entity(ex.message!!).build()
+        }
+    }
+    /**
+     * Initiates a flow to receive payment and updates bank balance
+     */
+    @PUT
+    @Path("receive-payment-post")
+    fun postReceivePayment(@QueryParam("amount") amount: Int): Response {
+
+        //val otherParty = rpcOps.wellKnownPartyFromX500Name(partyName) ?:
+        //return Response.status(BAD_REQUEST).entity("Party named $partyName cannot be found.\n").build()
+
+        return try {
+            val signedTx = rpcOps.startFlow(::ReceivePaymentFlow,amount).returnValue.getOrThrow()
+            Response.status(CREATED).entity("Transaction committed to ledger.\n").build()
 
         } catch (ex: Throwable) {
             logger.error(ex.message, ex)
