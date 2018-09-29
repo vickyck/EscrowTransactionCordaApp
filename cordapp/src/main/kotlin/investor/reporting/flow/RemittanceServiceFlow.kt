@@ -7,6 +7,7 @@ import investor.reporting.contract.RemittanceContract.Companion.CONTRACT_ID
 import investor.reporting.state.*
 import net.corda.core.contracts.Command
 import net.corda.core.contracts.Requirements.using
+import net.corda.core.contracts.filterStatesOfType
 import net.corda.core.contracts.requireThat
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
@@ -34,47 +35,66 @@ object RemittanceServiceFlow {
 
             val bankStates = serviceHub.vaultService.queryBy<BankState>().states
             if (bankStates.isEmpty())
-                throw Exception("No base BankStates found")
-            val baseBankState = bankStates.last().state.data
-            if (baseBankState.bankBalanceValue <= 0)
-                throw Exception("Bank balance is < 0")
+                throw Exception("BankEscrowTXFlow:: No BankStates were found")
+            val lastBankState = bankStates.last().state.data
+            if (lastBankState.bankBalanceValue <= 0)
+                throw Exception("BankEscrowTXFlow:: Not enough funds available, Bank balance is < 0")
 
             //get the default Tax & Insurance values from vault
-            val baseEscrowStates = serviceHub.vaultService.queryBy<EscrowState>().states
-            if (baseEscrowStates.isEmpty())
-                throw Exception("No base states found for EscrowState")
-            val baseEscrowState = baseEscrowStates.last().state.data;
+            val escrowState: EscrowState
+            val escrowStates = serviceHub.vaultService.queryBy<EscrowState>().states
+            if (escrowStates.isEmpty())
+            {
+                escrowState = EscrowState(props.taxVal,props.insuranceVal,props.parcelId,props.invAccountNum,props.taxVal,props.insuranceVal,props.escrowParty,props.invParty)
+            }
+            else
+            {
+                val lastEscrowState = escrowStates.last().state.data;
+                //prepare the new escrow state
+                escrowState = EscrowState(lastEscrowState.taxValue + props.taxVal,
+                        lastEscrowState.insuranceValue + props.insuranceVal,
+                        props.parcelId,props.invAccountNum,props.taxVal,props.insuranceVal,props.escrowParty,props.invParty)
+            }
+
 
             //prepare emi state
             val EMI_EscrowDeducted = props.emiVal - (props.taxVal + props.insuranceVal)
 
             //validate the emi to see if it can be serviceable
             if (EMI_EscrowDeducted <= 0)
-                throw Exception("Escrow can not be serviced as Emi -(tax + insurance) is <= 0")
+                throw Exception("BankEscrowTXFlow:: Escrow can not be serviced as Emi -(tax + insurance) is <= 0")
 
-            if (baseBankState.bankBalanceValue < (EMI_EscrowDeducted + props.taxVal + props.insuranceVal))
-                throw Exception("Not enough balance to serve Escrow TX to Investor")
+            if (lastBankState.bankBalanceValue < (EMI_EscrowDeducted + props.taxVal + props.insuranceVal))
+                throw Exception("BankEscrowTXFlow:: Not enough balance to serve Escrow TX to Investor")
 
-            val emiState = EMIState(EMI_EscrowDeducted, props.parcelId, props.invAccountNum, ourIdentity, props.invParty)
-
-            //prepare the new escrow state
-            val escrowState = EscrowState(baseEscrowState.taxValue + props.taxVal,
-                    baseEscrowState.insuranceValue + props.insuranceVal,
-                    props.parcelId,props.invAccountNum,props.escrowParty,props.invParty)
-
+            val emiStates = serviceHub.vaultService.queryBy<EMIState>().states
+            val emiState: EMIState
+            if(emiStates.isEmpty())
+            {
+                emiState = EMIState(EMI_EscrowDeducted,EMI_EscrowDeducted, props.parcelId, props.invAccountNum, ourIdentity, props.invParty)
+            }
+            else{
+                val lastEMIState = emiStates.last().state.data
+                emiState = EMIState(EMI_EscrowDeducted+lastEMIState.value,EMI_EscrowDeducted,props.parcelId, props.invAccountNum, ourIdentity, props.invParty)
+            }
 
             //prepare the bank state with new available balance
 
-            val newBankState = BankState(baseBankState.bankBalanceValue - (EMI_EscrowDeducted + props.taxVal + props.insuranceVal), ourIdentity)
+            val newBankState = BankState(lastBankState.bankBalanceValue - (EMI_EscrowDeducted + props.taxVal + props.insuranceVal), ourIdentity)
 
             //update the investor balance
+            val newInvState: InvestorState
             val invStates = serviceHub.vaultService.queryBy<InvestorState>().states
+
             if (invStates.isEmpty())
-                throw Exception("No base states found for InvestorState")
-
-            val baseInvState = invStates.last().state.data;
-            val newInvState = InvestorState(baseInvState.investorBalanceValue + EMI_EscrowDeducted + props.taxVal + props.insuranceVal, props.parcelId, ourIdentity,props.invParty)
-
+            {
+                newInvState = InvestorState(EMI_EscrowDeducted, props.parcelId, ourIdentity,props.invParty)
+            }
+            else
+            {
+                val lastInvState = invStates.last().state.data;
+                newInvState = InvestorState(lastInvState.investorBalanceValue + EMI_EscrowDeducted, props.parcelId, ourIdentity,props.invParty)
+            }
 
             val builder = TransactionBuilder(notary = notary)
                     .addOutputState(emiState, CONTRACT_ID)
@@ -130,10 +150,10 @@ object RemittanceServiceFlow {
             progressTracker.currentStep = GENERATING_TRANSACTION
             val bankStates = serviceHub.vaultService.queryBy<BankState>().states
             if (bankStates.isEmpty())
-                throw Exception("No base BankStates found")
-            val baseBankState = bankStates.last().state.data
-            if (baseBankState.bankBalanceValue <= 0)
-                throw Exception("Bank balance is < 0")
+                throw Exception("BankServicingTXFlow:: No base BankStates found")
+            val lastBankState = bankStates.last().state.data
+            if (lastBankState.bankBalanceValue <= 0)
+                throw Exception("BankServicingTXFlow:: Not enough funds available, Bank balance is < 0")
 
 
 
@@ -148,12 +168,21 @@ object RemittanceServiceFlow {
 
             //validate the emi to see if it can be serviceable
             if (EMI_ServicingDeducted <= 0)
-                throw Exception("Escrow can not be serviced as Emi -(recoverableFeeValue + preservationFeeValue + legalCostValue) is <= 0")
+                throw Exception("BankServicingTXFlow:: Escrow can not be serviced as Emi -(recoverableFeeValue + preservationFeeValue + legalCostValue) is <= 0")
 
-            if (baseBankState.bankBalanceValue < EMI_ServicingDeducted)
-                throw Exception("Not enough balance to serve Servicing TX to Investor")
+            if (lastBankState.bankBalanceValue < EMI_ServicingDeducted)
+                throw Exception("BankServicingTXFlow:: Not enough balance to serve Servicing TX to Investor")
 
-            val emiState = EMIState(EMI_ServicingDeducted, props.parcelId, props.invAccountNum, ourIdentity, props.invParty)
+            val emiStates = serviceHub.vaultService.queryBy<EMIState>().states
+            val emiState: EMIState
+            if(emiStates.isEmpty())
+            {
+                emiState = EMIState(EMI_ServicingDeducted,EMI_ServicingDeducted, props.parcelId, props.invAccountNum, ourIdentity, props.invParty)
+            }
+            else{
+                val lastEMIState = emiStates.last().state.data
+                emiState = EMIState(EMI_ServicingDeducted+lastEMIState.value,EMI_ServicingDeducted, props.parcelId, props.invAccountNum, ourIdentity, props.invParty)
+            }
 
             val servicingState : ServicingState
             if (baseServicingStates.isEmpty())
@@ -171,16 +200,19 @@ object RemittanceServiceFlow {
 
             //prepare the bank state with new available balance
 
-            val newBankState = BankState((baseBankState.bankBalanceValue - EMI_ServicingDeducted), ourIdentity)
+            val newBankState = BankState((lastBankState.bankBalanceValue - (EMI_ServicingDeducted+props.recoverableFeeValue+props.preservationFeeValue+props.legalCostValue )), ourIdentity)
 
             //update the investor balance
+            val newInvState: InvestorState
             val invStates = serviceHub.vaultService.queryBy<InvestorState>().states
             if (invStates.isEmpty())
-                throw Exception("No base states found for InvestorState")
-
-            val baseInvState = invStates.last().state.data;
-            val newInvState = InvestorState(baseInvState.investorBalanceValue + EMI_ServicingDeducted , props.parcelId, ourIdentity,props.invParty)
-
+            {
+                newInvState = InvestorState(EMI_ServicingDeducted , props.parcelId, ourIdentity,props.invParty)
+            }
+            else{
+                val lastInvState = invStates.last().state.data;
+                newInvState = InvestorState(lastInvState.investorBalanceValue + EMI_ServicingDeducted , props.parcelId, ourIdentity,props.invParty)
+            }
             val builder = TransactionBuilder(notary = notary)
                     .addOutputState(emiState, CONTRACT_ID)
                     .addOutputState(servicingState, CONTRACT_ID)

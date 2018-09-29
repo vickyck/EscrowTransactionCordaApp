@@ -36,33 +36,33 @@ class PreRequisiteDataLoadFlow() : FlowLogic<Unit>() {
     @Suspendable
     override fun call() {
         // We retrieve the notary identity from the network map.
-        val notary = serviceHub.networkMapCache.notaryIdentities[0]
-        val investorParty = serviceHub.identityService.partiesFromName("InvestorPartyB", false).singleOrNull()
-                ?: throw IllegalArgumentException("No exact match found for buyer name InvestorPartyB.")
-        //get the default Tax & Insurance values from vault
-        val baseEscrowStates = serviceHub.vaultService.queryBy<EscrowState>().states
-        if (baseEscrowStates.size > 1)
-            throw Exception("base escrow state already exist")
-
-        // We create the transaction components.
-        val escrowState = EscrowState(10, 10,"e0adbf57-eb1e-4455-956e-f30a4f43006c","5098674354",ourIdentity,investorParty)
-        //val servicingState = ServicingState(10, 10, 10, "47314fb0-5dc0-46ad-afd6-76dd5916d884","2549863072",ourIdentity, investorParty)
-        val investorState = InvestorState(10, "e0adbf57-eb1e-4455-956e-f30a4f43006d", ourIdentity, investorParty)
-        val bankState = BankState(10000,ourIdentity)
-        val cmd = Command(TemplateContract.Commands.Action(), ourIdentity.owningKey)
-
-        // We create a transaction builder and add the components.
-        val txBuilder = TransactionBuilder(notary = notary)
-                .addOutputState(escrowState, TEMPLATE_CONTRACT_ID)
-                //.addOutputState(servicingState, TEMPLATE_CONTRACT_ID)
-                .addOutputState(investorState, TEMPLATE_CONTRACT_ID)
-                .addOutputState(bankState, TEMPLATE_CONTRACT_ID)
-                .addCommand(cmd)
+//        val notary = serviceHub.networkMapCache.notaryIdentities[0]
+//        val investorParty = serviceHub.identityService.partiesFromName("InvestorPartyB", false).singleOrNull()
+//                ?: throw IllegalArgumentException("No exact match found for buyer name InvestorPartyB.")
+//        //get the default Tax & Insurance values from vault
+//        val baseEscrowStates = serviceHub.vaultService.queryBy<EscrowState>().states
+//        if (baseEscrowStates.size > 1)
+//            throw Exception("base escrow state already exist")
+//
+//        // We create the transaction components.
+//        val escrowState = EscrowState(10, 10,"e0adbf57-eb1e-4455-956e-f30a4f43006c","5098674354",ourIdentity,investorParty)
+//        //val servicingState = ServicingState(10, 10, 10, "47314fb0-5dc0-46ad-afd6-76dd5916d884","2549863072",ourIdentity, investorParty)
+//        val investorState = InvestorState(10, "e0adbf57-eb1e-4455-956e-f30a4f43006d", ourIdentity, investorParty)
+//        val bankState = BankState(10000,ourIdentity)
+//        val cmd = Command(TemplateContract.Commands.Action(), ourIdentity.owningKey)
+//
+//        // We create a transaction builder and add the components.
+//        val txBuilder = TransactionBuilder(notary = notary)
+//                .addOutputState(escrowState, TEMPLATE_CONTRACT_ID)
+//                //.addOutputState(servicingState, TEMPLATE_CONTRACT_ID)
+//                .addOutputState(investorState, TEMPLATE_CONTRACT_ID)
+//                .addOutputState(bankState, TEMPLATE_CONTRACT_ID)
+//                .addCommand(cmd)
 
         // We sign the transaction.
-        val signedTx = serviceHub.signInitialTransaction(txBuilder)
+        //val signedTx = serviceHub.signInitialTransaction(txBuilder)
 
         // We finalise the transaction.
-        subFlow(FinalityFlow(signedTx))
+        //subFlow(FinalityFlow(signedTx))
     }
 }

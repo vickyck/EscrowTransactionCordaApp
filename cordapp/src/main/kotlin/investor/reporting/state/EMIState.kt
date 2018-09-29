@@ -5,6 +5,7 @@ import net.corda.core.identity.Party
 
 data class EMIState(
                 val value: Int,
+                val receivedAmount: Int,
                 val parcelId: String,
                 val invAccountNumber: String,
                 val bank: Party,

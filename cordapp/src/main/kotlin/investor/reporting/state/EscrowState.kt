@@ -8,6 +8,8 @@ data class EscrowState(
                         val insuranceValue: Int,
                         val parcelId: String,
                         val invAccountNumber: String,
+                        val taxReceived: Int,
+                        val insuranceReceived: Int,
                         val escrowParty: Party,
                         val investorParty: Party) : ContractState {
     override val participants get() = listOf(escrowParty,investorParty)
