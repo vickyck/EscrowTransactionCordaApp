@@ -217,6 +217,8 @@ app.controller('HomeController', function ($http, $location, $uibModal, $scope, 
                        //alert(result.data);
                        $("#result").html('<div class="alert alert-success"><button type="button" class="close">×</button>' + result.data + '</div>');
                        demoApp.getServicings();
+                       demoApp.getTransactions();
+                       demoApp.getBankBalance();
                    },
                    (result) => {
                        setAlertTimeout();
